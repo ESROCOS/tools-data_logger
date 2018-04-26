@@ -51,6 +51,6 @@ BufferConstIt data_logger::SampleHeader::deserialize(BufferConstIt it)
 
 void data_logger::SampleHeader::deserialize(std::istream is)
 {
-    is.readsome((char*)&_buffer[0], serializedSize());
+    is.read((char*)&_buffer[0], serializedSize());
     deserialize(_buffer.begin());
 }

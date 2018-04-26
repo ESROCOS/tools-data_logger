@@ -20,23 +20,29 @@ uint64_t data_logger::StreamHeader::serializedSize()
     szDataModel = dataModel.size()*sizeof(char);
     szEncodingHint = encodingHint.size()*sizeof(char);
     //Memory:
-    //[ nSamples | szDataModel | DataModel | szDataMetaModel | DataMetaModel |
-    //szEncodingHint | encodingHint ]
-    return(sizeof(size_t) + sizeof(size_t)+szDataModel + sizeof(size_t)+szDataMetaModel +
-           sizeof(size_t) + szEncodingHint);
+    //[ szHeader | nSamples | szDataModel | DataModel | szDataMetaModel |
+    //  DataMetaModel | szEncodingHint | encodingHint ]
+    return(sizeof(size_t) + sizeof(size_t) + sizeof(size_t)+szDataModel +
+           sizeof(size_t)+szDataMetaModel + sizeof(size_t) + szEncodingHint);
 }
 
 Buffer data_logger::StreamHeader::serialize()
 {
-    _buffer.resize(serializedSize());
+    size_t szHeader = serializedSize();
+    _buffer.resize(szHeader);
     BufferIt it = _buffer.begin();
 
     //Memory:
-    //[ nSamples | szDataModel | DataModel | szDataMetaModel | DataMetaModel |
-    //szEncodingHint | encodingHint ]
+    //[ szHeader | nSamples | szDataModel | DataModel | szDataMetaModel |
+    //  DataMetaModel | szEncodingHint | encodingHint ]
+
+    //Copy szHeader
+    uint8_t* s = (uint8_t*) &szHeader;
+    std::cout << sizeof(szHeader) << ", ";
+    it = std::copy(s, s+sizeof(szHeader), it);
 
     //Copy nSamples
-    uint8_t* s = (uint8_t*) &nSamples;
+    s = (uint8_t*) &nSamples;
     std::cout << sizeof(nSamples) << ", ";
     it = std::copy(s, s+sizeof(nSamples), it);
 
@@ -76,8 +82,12 @@ Buffer data_logger::StreamHeader::serialize()
 BufferConstIt data_logger::StreamHeader::deserialize(BufferConstIt it)
 {
     //Memory:
-    //[ nSamples | szDataModel | DataModel | szDataMetaModel | DataMetaModel |
-    //szEncodingHint | encodingHint ]
+    //[ szHeader | nSamples | szDataModel | DataModel | szDataMetaModel |
+    //  DataMetaModel | szEncodingHint | encodingHint ]
+
+    size_t szHeader;
+    //Copy szHeader
+    it = deserialize_var<size_t>(it, szHeader);
 
     //Copy nSamples
     it = deserialize_var<size_t>(it, nSamples);
@@ -101,4 +111,17 @@ BufferConstIt data_logger::StreamHeader::deserialize(BufferConstIt it)
     it = deserialize_container<std::string::iterator>(it, encodingHint.begin(), szEncodingHint);
 
     return it;
+}
+
+void data_logger::StreamHeader::deserialize(std::istream& is)
+{
+    int begin = is.tellg();
+    size_t szHeader;
+    char* hp = (char*) &szHeader;
+    is.read(hp, sizeof(size_t));
+
+    _buffer.resize(szHeader);
+    is.seekg(begin, is.beg);
+    is.read((char*) &_buffer[0], szHeader);
+    deserialize(_buffer.begin());
 }

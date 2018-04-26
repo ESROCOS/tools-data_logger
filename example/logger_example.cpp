@@ -150,6 +150,9 @@ int main(int argc, char** argv)
 
 
 
-     //LogFileReader<MySeq> reader("/tmp/logtest.log");
-     //reader.setDecoding(MySeq_ACN_Decode());
+     LogFileReader<MySeq> reader("/tmp/logtest.log");
+     reader.setDecoding(Decode_ACN_MySeq);
+     StreamHeader sth = reader.readStreamHeader();
+     std::cout << "Data Model: " << sth.dataModel<<"\nData MetaModel: " << sth.dataMetaModel
+               << "\nEncoding Hint: "<<sth.encodingHint<<"\n# Samples: "<<sth.nSamples<<std::endl;
 }

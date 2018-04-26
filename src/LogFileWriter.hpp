@@ -23,11 +23,13 @@ public:
     void setEncodingHint(std::string str);
 
     void start();
+    void writeHeader();
 
 protected:
     std::ofstream _fstream;
     Stream<T> _stream;
     bool _headerWritten;
+    std::string _targetPath;
 };
 }
 

@@ -13,17 +13,17 @@ public:
     ~LogFileReader();
 
     void close();
-    void setDecoding(size_t (*fn)(T*, BufferByte*, size_t*))
+    void setDecoding(int (*fn)(T*, BufferByte*, size_t))
     {
         _stream.setDecoding(fn);
     }
 
-    void getStreamHeader();
+    StreamHeader readStreamHeader();
     void readNextSample(EncodedSample<T>& sample);
     void rewind();
 protected:
     Stream<T> _stream;
-    std::ofstream _fstream;
+    std::ifstream _fstream;
 };
 }
 
