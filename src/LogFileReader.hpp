@@ -19,7 +19,7 @@ public:
     }
 
     void getStreamHeader();
-    void readNextSample(EncodedSample& sample);
+    void readNextSample(EncodedSample<T>& sample);
     void rewind();
 protected:
     Stream<T> _stream;

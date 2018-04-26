@@ -66,6 +66,24 @@ size_t Encode_ACN_MySeq(BufferByte *pBuffer, size_t iMaxBufferSize, const MySeq 
     }
 }
 
+int Decode_ACN_MySeq(MySeq *pDst, BufferByte* pBuffer, size_t iBufferSize)
+{
+    (void)iBufferSize;
+    int errorCode;
+
+    BitStream strm;
+
+    BitStream_AttachBuffer(&strm, pBuffer, iBufferSize);
+
+    if (MySeq_ACN_Decode(pDst, &strm, &errorCode)) {
+        /* Decoding succeeded */
+        return 0;
+    } else {
+    fprintf(stderr, "Could not decode MySeq (at %s, %d), error code was %d\n", __FILE__, __LINE__, errorCode);
+        return -1;
+    }
+}
+
 
 int main(int argc, char** argv)
 {
@@ -132,6 +150,6 @@ int main(int argc, char** argv)
 
 
 
-     LogFileReader<MySeq> reader("/tmp/logtest.log");
-     reader.setDecoding(MySeq_ACN_Decode());
+     //LogFileReader<MySeq> reader("/tmp/logtest.log");
+     //reader.setDecoding(MySeq_ACN_Decode());
 }
