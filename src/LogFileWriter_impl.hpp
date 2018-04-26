@@ -40,3 +40,34 @@ void data_logger::LogFileWriter<T>::close()
 {
     _fstream.close();
 }
+
+template<class T>
+void data_logger::LogFileWriter<T>::setDataModelFromString(
+        std::string str,
+        std::string metaModel)
+{
+    _stream.header().dataModel = str;
+    _stream.header().dataMetaModel = metaModel;
+}
+
+template<class T>
+void data_logger::LogFileWriter<T>::setDataModelFromFile(
+        std::string path,
+        std::string metaModel)
+{
+    std::ifstream t(path);
+    if(!t.is_open()){
+        usage_error("The file "+path+" is not valid.");
+    }
+    std::string str((std::istreambuf_iterator<char>(t)),
+                     std::istreambuf_iterator<char>());
+    setDataModelFromString(str);
+    t.close();
+}
+
+template<class T>
+void data_logger::LogFileWriter<T>::setEncodingHint(
+        std::string str)
+{
+    _stream.header().encodingHint = str;
+}

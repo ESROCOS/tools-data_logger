@@ -14,7 +14,8 @@ public:
 
     uint64_t serializedSize() override;
     Buffer serialize() override;
-    void deserialize(Buffer& buffer) override;
+    BufferConstIt deserialize(BufferConstIt it) override;
+    void deserialize(std::istream is);
 
 protected:
 };

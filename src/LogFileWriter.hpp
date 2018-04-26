@@ -18,25 +18,9 @@ public:
         _stream.setEncoding(fn);
     }
 
-    void setDataModelFromString(std::string str, std::string metaModel = "ASN.1"){
-        _stream.header().dataModel = str;
-        _stream.header().dataMetaModel = metaModel;
-    }
-
-    void setDataModelFromFile(std::string path, std::string metaModel = "ASN.1"){
-        std::ifstream t(path);
-        if(!t.is_open()){
-            usage_error("The file "+path+" is not valid.");
-        }
-        std::string str((std::istreambuf_iterator<char>(t)),
-                         std::istreambuf_iterator<char>());
-        setDataModelFromString(str);
-        t.close();
-    }
-
-    void setEncodingHint(std::string str){
-        _stream.header().encodingHint = str;
-    }
+    void setDataModelFromString(std::string str, std::string metaModel = "ASN.1");
+    void setDataModelFromFile(std::string path, std::string metaModel = "ASN.1");
+    void setEncodingHint(std::string str);
 
     void start();
 

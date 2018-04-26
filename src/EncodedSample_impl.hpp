@@ -1,5 +1,8 @@
 #pragma once
 #include "EncodedSample.hpp"
+#include <chrono>
+
+using namespace std::chrono;
 
 
 template<class T>
@@ -25,15 +28,14 @@ void data_logger::EncodedSample<T>::setPayload(const T &sample)
         runtime_error("No function for Payload sample encoding set");
     }
     BufferByte* ptr = (BufferByte*) &_payloadBuffer[0];
-
-    _header.payloadSize = _encodePayload(ptr, MAX_SAMPLE_SIZE, &_payloadSample);
+    header.payloadSize = _encodePayload(ptr, MAX_SAMPLE_SIZE, &_payloadSample);
 }
 
 template<class T>
 T data_logger::EncodedSample<T>::getPayload()
 {
     void* ptr = (void*) _payloadBuffer.begin();
-    int st = _decodePayload(&_payloadSample, _payloadBuffer, _header.payloadSize);
+    int st = _decodePayload(&_payloadSample, _payloadBuffer, header.payloadSize);
     if(!st){
         runtime_error("Error decoding sample");
     }
@@ -43,7 +45,7 @@ T data_logger::EncodedSample<T>::getPayload()
 template<class T>
 uint64_t data_logger::EncodedSample<T>::serializedSize()
 {
-    return _header.serializedSize() + _header.payloadSize;
+    return header.serializedSize() + header.payloadSize;
 }
 
 
@@ -54,18 +56,36 @@ Buffer data_logger::EncodedSample<T>::serialize()
     BufferIt it = _buffer.begin();
 
     //Copy header
-    uint8_t* s = (uint8_t*) &_header.serialize()[0];
-    it = std::copy(s, s+sizeof(_header.serializedSize()), it);
+    Buffer b = header.serialize();
+    size_t ss = header.serializedSize();
+    uint8_t* s = (uint8_t*) &b[0];
+    it = std::copy(s, s+header.serializedSize(), it);
 
     //Copy Payload
     s = (uint8_t*) &_payloadBuffer[0];
-    it = std::copy(s, s+sizeof(_header.payloadSize), it);
+    it = std::copy(s, s+header.payloadSize, it);
 
     return _buffer;
 }
 
 template<class T>
-void data_logger::EncodedSample<T>::deserialize(Buffer &buffer)
+BufferConstIt data_logger::EncodedSample<T>::deserialize(BufferConstIt it)
 {
-    runtime_error("not implemented");
+    //Deserialize header
+    it = header.deserialize(it);
+    //Copy payload
+    it = deserialize_container<BufferIt>(it, _payloadBuffer.begin(), header.payloadSize);
+    /*uint8_t* g = (uint8_t*) &_payloadBuffer[0];
+    std::copy(it, it+_header.payloadSize, g);
+    std::advance(it, _header.payloadSize);*/
+    return it;
+}
+
+template<class T>
+void data_logger::EncodedSample<T>::deserialize(std::istream is)
+{
+    //Deserialize header
+    header.deserialize(is);
+    //Copy payload
+    is.readsome((char*)_payloadBuffer[0], header.payloadSize);
 }

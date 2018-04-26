@@ -18,10 +18,11 @@ public:
 
     uint64_t serializedSize() override;
     Buffer serialize() override;
-    void deserialize(Buffer& buffer) override;
+    BufferConstIt deserialize(BufferConstIt it) override;
+    void deserialize(std::istream is);
+    SampleHeader header;
 
 protected:
-    SampleHeader _header;
     Buffer _payloadBuffer;
     T _payloadSample;
     //size_t Encode_UPER_MySeq(void *pBuffer, size_t iMaxBufferSize, const asn1SccMySeq *pSrc);

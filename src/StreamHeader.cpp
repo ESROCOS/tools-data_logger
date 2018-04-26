@@ -73,7 +73,32 @@ Buffer data_logger::StreamHeader::serialize()
     return _buffer;
 }
 
-void data_logger::StreamHeader::deserialize(Buffer &buffer)
+BufferConstIt data_logger::StreamHeader::deserialize(BufferConstIt it)
 {
-    runtime_error("not implemented");
+    //Memory:
+    //[ nSamples | szDataModel | DataModel | szDataMetaModel | DataMetaModel |
+    //szEncodingHint | encodingHint ]
+
+    //Copy nSamples
+    it = deserialize_var<size_t>(it, nSamples);
+
+    //Copy szDataModel
+    it = deserialize_var<size_t>(it, szDataModel);
+    //Copy DataModel
+    dataModel.resize(szDataModel);
+    it = deserialize_container<std::string::iterator>(it, dataModel.begin(), szDataModel);
+
+    //Copy szDataMetaModel
+    it = deserialize_var<size_t>(it, szDataMetaModel);
+    //Copy DataMetaModel
+    dataMetaModel.resize(szDataMetaModel);
+    it = deserialize_container<std::string::iterator>(it, dataMetaModel.begin(), szDataMetaModel);
+
+    //Copy szEncodingHint
+    it = deserialize_var<size_t>(it, szEncodingHint);
+    //Copy encodingHint
+    encodingHint.resize(szEncodingHint);
+    it = deserialize_container<std::string::iterator>(it, encodingHint.begin(), szEncodingHint);
+
+    return it;
 }

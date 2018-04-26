@@ -18,4 +18,19 @@ inline void runtime_error(std::string s){
     throw(std::runtime_error(s));
 }
 
+template<typename TargetType>
+BufferConstIt deserialize_var(BufferConstIt it, TargetType& target){
+    uint8_t* g = (uint8_t*) &target;
+    std::copy(it, it+sizeof(target), g);
+    std::advance(it, sizeof(target));
+    return it;
+}
+
+template<typename TargetIterator>
+BufferConstIt deserialize_container(BufferConstIt it, TargetIterator target, size_t sz){
+    std::copy(it, it+sz, target);
+    std::advance(it, sz);
+    return it;
+}
+
 #define MAX_SAMPLE_SIZE 3000000

@@ -10,7 +10,7 @@ public:
 
     virtual uint64_t serializedSize() = 0;
     virtual Buffer serialize() = 0;
-    virtual void deserialize(Buffer& buffer) = 0;
+    virtual BufferConstIt deserialize(BufferConstIt buffer) = 0;
 
 protected:
     Buffer _buffer;

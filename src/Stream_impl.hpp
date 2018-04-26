@@ -1,5 +1,6 @@
 #pragma once
 #include "Stream.hpp"
+#include <fstream>
 
 template<class T>
 data_logger::Stream<T>::Stream() : _currentSampleIdx(-1)
@@ -22,3 +23,14 @@ size_t data_logger::Stream<T>::pushSample(
     _currentSampleIdx++;
     _header.nSamples++;
 }
+
+template<class T>
+size_t data_logger::Stream<T>::readNextSample(
+        std::ifstream &fstream,
+        T &sample)
+{
+    //Using _currentSample.header.serializedSize() is okay, since SampleHeader is of static size
+    _currentSample.deserialize(fstream);
+    sample = _currentSample.getPayload();
+}
+

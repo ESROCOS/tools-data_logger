@@ -2,7 +2,8 @@
 
 data_logger::SampleHeader::SampleHeader()
 {
-
+    //It's okay to resize here as long as the size of SampleHeader is static
+    _buffer.resize(serializedSize());
 }
 
 data_logger::SampleHeader::~SampleHeader()
@@ -18,8 +19,9 @@ uint64_t data_logger::SampleHeader::serializedSize()
 
 Buffer data_logger::SampleHeader::serialize()
 {
-    _buffer.resize(serializedSize());
     BufferIt it = _buffer.begin();
+
+    it++;
 
     //Copy timestamp
     uint8_t* s = (uint8_t*) &writeTimeStamp;
@@ -32,15 +34,23 @@ Buffer data_logger::SampleHeader::serialize()
     return _buffer;
 }
 
-void data_logger::SampleHeader::deserialize(Buffer &buffer)
+BufferConstIt data_logger::SampleHeader::deserialize(BufferConstIt it)
 {
-    BufferIt it = buffer.begin();
-
-    //Copy timestamp
+    /*//Copy timestamp
     uint8_t* g = (uint8_t*) &writeTimeStamp;
     std::copy(it, it+sizeof(writeTimeStamp), g);
     std::advance(it, sizeof(writeTimeStamp));
     //Copy payload size
     g = (uint8_t*) &payloadSize;
     std::copy(it, it+sizeof(payloadSize), g);
+    std::advance(it, sizeof(payloadSize));*/
+    it = deserialize_var<int64_t>(it, writeTimeStamp.microseconds);
+    it = deserialize_var<uint64_t>(it, payloadSize);
+    return it;
+}
+
+void data_logger::SampleHeader::deserialize(std::istream is)
+{
+    is.readsome((char*)&_buffer[0], serializedSize());
+    deserialize(_buffer.begin());
 }

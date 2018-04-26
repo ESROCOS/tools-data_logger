@@ -14,7 +14,7 @@ public:
 
     uint64_t serializedSize() override;
     Buffer serialize() override;
-    void deserialize(Buffer& buffer) override;
+    BufferConstIt deserialize(BufferConstIt it) override;
 
 protected:
     size_t szDataModel;
