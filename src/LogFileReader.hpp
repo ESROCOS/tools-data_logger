@@ -19,7 +19,12 @@ public:
     }
 
     StreamHeader readStreamHeader();
-    void readNextSample(EncodedSample<T>& sample);
+    /*!
+     * \brief readNextSample
+     * \param sample
+     * \return Index of the sample read. Returns -1 if the reading did not succeed.
+     */
+    size_t readNextSample(EncodedSample<T>& sample);
     void rewind();
 protected:
     Stream<T> _stream;

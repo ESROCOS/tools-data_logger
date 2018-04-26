@@ -38,43 +38,35 @@ Buffer data_logger::StreamHeader::serialize()
 
     //Copy szHeader
     uint8_t* s = (uint8_t*) &szHeader;
-    std::cout << sizeof(szHeader) << ", ";
     it = std::copy(s, s+sizeof(szHeader), it);
 
     //Copy nSamples
     s = (uint8_t*) &nSamples;
-    std::cout << sizeof(nSamples) << ", ";
     it = std::copy(s, s+sizeof(nSamples), it);
 
     //Copy szDataModel
     s = (uint8_t*) &szDataModel;
     it = std::copy(s, s+sizeof(szDataModel), it);
-    std::cout << sizeof(szDataModel) << ", ";
 
     //Copy DataModel
     s = (uint8_t*) &dataModel[0];
     it = std::copy(s, s+szDataModel, it);
-    std::cout << szDataModel << ", ";
 
     //Copy szDataMetaModel
     s = (uint8_t*) &szDataMetaModel;
     it = std::copy(s, s+sizeof(szDataMetaModel), it);
-    std::cout << sizeof(szDataMetaModel) << ", ";
 
     //Copy DataMetaModel
     s = (uint8_t*) &dataMetaModel[0];
     it = std::copy(s, s+szDataMetaModel, it);
-    std::cout << szDataMetaModel << ",";
 
     //Copy szEncodingHint
     s = (uint8_t*) &szEncodingHint;
     it = std::copy(s, s+sizeof(szEncodingHint), it);
-    std::cout << sizeof(szEncodingHint) << ", ";
 
     //Copy encodingHint
     s = (uint8_t*) &encodingHint[0];
     it = std::copy(s, s+szEncodingHint, it);
-    std::cout << szEncodingHint << std::endl;
 
     return _buffer;
 }

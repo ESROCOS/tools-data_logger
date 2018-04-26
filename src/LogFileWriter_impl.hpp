@@ -8,6 +8,10 @@ data_logger::LogFileWriter<T>::LogFileWriter(std::string filepath) :
     _targetPath(filepath)
 {
     _fstream.open(_targetPath, std::ios_base::out | std::ios_base::binary);
+    if (errno != 0)
+        throw std::system_error(errno, std::system_category());
+    if (!_fstream)
+        runtime_error("IO_FAIL");
 }
 
 template<class T>

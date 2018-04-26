@@ -19,7 +19,7 @@ public:
     uint64_t serializedSize() override;
     Buffer serialize() override;
     BufferConstIt deserialize(BufferConstIt it) override;
-    void deserialize(std::istream is);
+    void deserialize(std::istream &is);
     SampleHeader header;
 
 protected:

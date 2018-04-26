@@ -1,12 +1,17 @@
 #pragma once
 #include "LogFileReader.hpp"
 #include "StreamHeader.hpp"
-
+#include <exception>
 
 template<class T>
 data_logger::LogFileReader<T>::LogFileReader(std::string filepath)
 {
+    errno = 0;
     _fstream.open(filepath, std::ios_base::in | std::ios_base::binary);
+    if (errno != 0)
+        throw std::system_error(errno, std::system_category());
+    if (!_fstream)
+        runtime_error("IO_FAIL");
 }
 
 template<class T>
@@ -24,23 +29,29 @@ void data_logger::LogFileReader<T>::close()
 template<class T>
 data_logger::StreamHeader data_logger::LogFileReader<T>::readStreamHeader()
 {
-    int curpos = _fstream.tellg();
     _fstream.seekg(0, _fstream.beg);
     StreamHeader& header = _stream.header();
     header.deserialize(_fstream);
-    _fstream.seekg(curpos, _fstream.beg);
     return _stream.header();
 }
 
 template<class T>
-void data_logger::LogFileReader<T>::readNextSample(
+size_t data_logger::LogFileReader<T>::readNextSample(
         EncodedSample<T> &sample)
 {
     if(_fstream.eof()){
-        std::cerr << "END OF FILE!" <<std::endl;
+        std::cout << "END OF FILE!" <<std::endl;
     }
-    _stream.readNextSample(_fstream);
-    sample = _stream.currentSample.getPayload();
+    if(!_fstream.good()){
+        std::cout << "NOT GOOD!" <<std::endl;
+    }
+    bool st = _stream.readNextSample(_fstream);
+    if(st){
+        sample = _stream.currentSample;
+        return _stream.currentSampleIdx;
+    }else{
+        return -1;
+    }
 }
 
 template<class T>

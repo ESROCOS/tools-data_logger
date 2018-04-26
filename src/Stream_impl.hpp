@@ -3,7 +3,7 @@
 #include <fstream>
 
 template<class T>
-data_logger::Stream<T>::Stream() : _currentSampleIdx(-1)
+data_logger::Stream<T>::Stream() : currentSampleIdx(-1)
 {
 
 }
@@ -17,18 +17,24 @@ template<class T>
 size_t data_logger::Stream<T>::pushSample(
         std::ofstream &fstream, T sample)
 {
+    currentSample.header.writeTimeStamp = Time::now();
     currentSample.setPayload(sample);
     Buffer serialized = currentSample.serialize();
     fstream.write((char*)&serialized[0], serialized.size()*sizeof(BufferByte));
-    _currentSampleIdx++;
+    currentSampleIdx++;
     _header.nSamples++;
 }
 
 template<class T>
-size_t data_logger::Stream<T>::readNextSample(
+bool data_logger::Stream<T>::readNextSample(
         std::ifstream &fstream)
 {
     //Using _currentSample.header.serializedSize() is okay, since SampleHeader is of static size
-    currentSample.deserialize(fstream);
+    if(_header.nSamples > currentSampleIdx+1){
+        currentSample.deserialize(fstream);
+        currentSampleIdx++;
+    }else{
+        return false;
+    }
 }
 

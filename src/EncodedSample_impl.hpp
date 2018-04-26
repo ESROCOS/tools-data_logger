@@ -34,9 +34,8 @@ void data_logger::EncodedSample<T>::setPayload(const T &sample)
 template<class T>
 T data_logger::EncodedSample<T>::getPayload()
 {
-    void* ptr = (void*) _payloadBuffer.begin();
-    int st = _decodePayload(&_payloadSample, _payloadBuffer, header.payloadSize);
-    if(!st){
+    int st = _decodePayload(&_payloadSample, &_payloadBuffer[0], header.payloadSize);
+    if(st != 0){
         runtime_error("Error decoding sample");
     }
     return _payloadSample;
@@ -82,10 +81,15 @@ BufferConstIt data_logger::EncodedSample<T>::deserialize(BufferConstIt it)
 }
 
 template<class T>
-void data_logger::EncodedSample<T>::deserialize(std::istream is)
+void data_logger::EncodedSample<T>::deserialize(std::istream& is)
 {
     //Deserialize header
     header.deserialize(is);
     //Copy payload
-    is.readsome((char*)_payloadBuffer[0], header.payloadSize);
+    is.read((char*)&_payloadBuffer[0], header.payloadSize);
+    if (!is)
+    {
+        std::cout << "error: only " << is.gcount() << " could be read";
+        runtime_error("Error decoding payload");
+    }
 }

@@ -15,7 +15,7 @@ public:
     //Write given sample to ofstream
     size_t pushSample(std::ofstream& fstream, T sample);
     //Read next sample from ifstream
-    size_t readNextSample(std::ifstream& fstream);
+    bool readNextSample(std::ifstream& fstream);
     //Jump back to first sample of ifstream
     void rewind(std::ifstream& fstream);
 
@@ -24,8 +24,8 @@ public:
     void setEncoding(size_t (*fn)(BufferByte*, size_t, const T*)){currentSample.setEncodeFn(fn);}
     void setDecoding(int (*fn)(T*, BufferByte*, size_t)){currentSample.setDecodeFn(fn);}
     EncodedSample<T> currentSample;
+    size_t currentSampleIdx;
 protected:
-    size_t _currentSampleIdx;
     StreamHeader _header;
 };
 

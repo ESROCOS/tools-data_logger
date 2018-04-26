@@ -114,7 +114,7 @@ int main(int argc, char** argv)
 
     std::cout << "Writing 1" << std::endl;
     timed_write(writer, sample);
-
+    usleep(100000);
 
     sample.input_data = 2;
     sample.output_data = 22;
@@ -122,6 +122,7 @@ int main(int argc, char** argv)
 
     std::cout << "Writing 2" << std::endl;
     timed_write(writer, sample);
+    usleep(100000);
 
     sample.input_data = 3;
     sample.output_data = 33;
@@ -129,6 +130,7 @@ int main(int argc, char** argv)
 
     std::cout << "Writing 3" << std::endl;
     timed_write(writer, sample);
+    usleep(100000);
 
     sample.input_data = 4;
     sample.output_data = 44;
@@ -136,6 +138,7 @@ int main(int argc, char** argv)
 
     std::cout << "Writing 4" << std::endl;
     timed_write(writer, sample);
+    usleep(100000);
 
     sample.input_data = 5;
     sample.output_data = 55;
@@ -143,6 +146,7 @@ int main(int argc, char** argv)
 
     std::cout << "Writing 5" << std::endl;
     timed_write(writer, sample);
+    usleep(100000);
 
     writer.close();
 
@@ -155,4 +159,20 @@ int main(int argc, char** argv)
      StreamHeader sth = reader.readStreamHeader();
      std::cout << "Data Model: " << sth.dataModel<<"\nData MetaModel: " << sth.dataMetaModel
                << "\nEncoding Hint: "<<sth.encodingHint<<"\n# Samples: "<<sth.nSamples<<std::endl;
+     MySeq sample_r;
+     EncodedSample<MySeq> s;
+     size_t idx;
+     while(true){
+         idx = reader.readNextSample(s);
+         if(idx == -1){
+             std::cout << "No mor samples"<<std::endl;
+             break;
+         }
+         std::cout <<"\n"<< idx+1 << "/" << sth.nSamples<<" samples read"<<std::endl;
+         sample_r = s.getPayload();
+         std::cout << "Timestamp: "<<s.header.writeTimeStamp.toString()<<std::endl;
+         std::cout << "Read: "<<sample_r.input_data<<", "<<sample_r.output_data<<","<<sample_r.validity<<std::endl;
+     }
+     reader.close();
+     std::cout << "Closed"<<std::endl;
 }
