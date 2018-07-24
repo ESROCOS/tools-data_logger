@@ -15,3 +15,13 @@ set(SOURCES SampleHeader.cpp StreamHeader.cpp time.cpp)
 
 add_library(data_logger ${SOURCES} ${HEADERS})
 
+install(TARGETS data_logger 
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib)
+
+CONFIGURE_FILE("data_logger.pc.in" "data_logger.pc" @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/data_logger.pc
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig
+)
+

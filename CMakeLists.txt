@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8.11)
-project (logger)
+project (data_logger)
 
 macro(use_cxx11)
   if (CMAKE_VERSION VERSION_LESS "3.1")
