@@ -19,11 +19,13 @@ uint64_t data_logger::StreamHeader::serializedSize()
     szDataMetaModel = dataMetaModel.size()*sizeof(char);
     szDataModel = dataModel.size()*sizeof(char);
     szEncodingHint = encodingHint.size()*sizeof(char);
+    szEndianness = endianness.size()*sizeof(char);
     //Memory:
     //[ szHeader | nSamples | szDataModel | DataModel | szDataMetaModel |
     //  DataMetaModel | szEncodingHint | encodingHint ]
-    return(sizeof(size_t) + sizeof(size_t) + sizeof(size_t)+szDataModel +
-           sizeof(size_t)+szDataMetaModel + sizeof(size_t) + szEncodingHint);
+    return(sizeof(size_t) + sizeof(size_t) + sizeof(size_t) + szDataModel +
+           sizeof(size_t) + szDataMetaModel + sizeof(size_t) + szEncodingHint +
+           sizeof(size_t) + szEndianness);
 }
 
 Buffer data_logger::StreamHeader::serialize()
@@ -68,6 +70,14 @@ Buffer data_logger::StreamHeader::serialize()
     s = (uint8_t*) &encodingHint[0];
     it = std::copy(s, s+szEncodingHint, it);
 
+    //Copy szEndianess
+    s = (uint8_t*) &szEndianness;
+    it = std::copy(s, s+sizeof(szEndianness), it);
+
+    //Copy Endianness
+    s = (uint8_t*) &endianness[0];
+    it = std::copy(s, s+szEndianness, it);
+
     return _buffer;
 }
 
@@ -101,6 +111,12 @@ BufferConstIt data_logger::StreamHeader::deserialize(BufferConstIt it)
     //Copy encodingHint
     encodingHint.resize(szEncodingHint);
     it = deserialize_container<std::string::iterator>(it, encodingHint.begin(), szEncodingHint);
+
+    //Copy szEndianness
+    it = deserialize_var<size_t>(it, szEndianness);
+    //Copy endianness
+    endianness.resize(szEndianness);
+    it = deserialize_container<std::string::iterator>(it, endianness.begin(), szEndianness);
 
     return it;
 }

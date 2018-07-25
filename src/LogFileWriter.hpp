@@ -11,7 +11,7 @@ public:
     LogFileWriter(std::string filepath);
     ~LogFileWriter();
 
-    void write(T& sample);
+    void write(const T& sample);
     void close();
     void setEncoding(size_t (*fn)(BufferByte*, size_t, const T*))
     {

@@ -1,12 +1,17 @@
 #pragma once
 
 #include "LogFileWriter.hpp"
+#include "host_order.hpp"
+#include <iostream>
 
 template<class T>
 data_logger::LogFileWriter<T>::LogFileWriter(std::string filepath) :
     _headerWritten(false),
     _targetPath(filepath)
 {
+    _stream.header().endianness = O32_ENDIANESS_TO_STRING(O32_HOST_ORDER);
+    std::cout << "System is " << _stream.header().endianness;
+
     _fstream.open(_targetPath, std::ios_base::out | std::ios_base::binary);
     if (errno != 0)
         throw std::system_error(errno, std::system_category());
@@ -19,6 +24,7 @@ data_logger::LogFileWriter<T>::~LogFileWriter()
 {
     this->close();
 }
+
 
 template<class T>
 void data_logger::LogFileWriter<T>::LogFileWriter::start()
@@ -41,7 +47,7 @@ void data_logger::LogFileWriter<T>::LogFileWriter::writeHeader()
 
 
 template<class T>
-void data_logger::LogFileWriter<T>::write(T &sample)
+void data_logger::LogFileWriter<T>::write(const T &sample)
 {
     if(!_headerWritten){
         usage_error("start has not been called");
@@ -52,6 +58,7 @@ void data_logger::LogFileWriter<T>::write(T &sample)
 template<class T>
 void data_logger::LogFileWriter<T>::close()
 {
+    std::cout << "Closing log file " << _targetPath << std::endl;
     //Rewrite Header to update number of written samples
     //1. We copy the result to tmp
     //2. Create a file which will contain the update info 'updated'

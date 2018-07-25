@@ -10,6 +10,7 @@ set(HEADERS common_defs.hpp
             Stream.hpp
             Stream_impl.hpp
             StreamHeader.hpp
+            host_order.hpp
             time.hpp)
 set(SOURCES SampleHeader.cpp StreamHeader.cpp time.cpp)
 
@@ -19,6 +20,8 @@ install(TARGETS data_logger
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib)
+install(FILES ${HEADERS} 
+        DESTINATION include/data_logger)
 
 CONFIGURE_FILE("data_logger.pc.in" "data_logger.pc" @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/data_logger.pc
