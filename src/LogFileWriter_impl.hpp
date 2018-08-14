@@ -10,7 +10,7 @@ data_logger::LogFileWriter<T>::LogFileWriter(std::string filepath) :
     _targetPath(filepath)
 {
     _stream.header().endianness = O32_ENDIANESS_TO_STRING(O32_HOST_ORDER);
-    std::cout << "System is " << _stream.header().endianness;
+    std::cout << "System is " << _stream.header().endianness << "\n";
 
     _fstream.open(_targetPath, std::ios_base::out | std::ios_base::binary);
     if (errno != 0)
@@ -109,7 +109,7 @@ void data_logger::LogFileWriter<T>::setDataModelFromFile(
     }
     std::string str((std::istreambuf_iterator<char>(t)),
                      std::istreambuf_iterator<char>());
-    setDataModelFromString(str);
+    setDataModelFromString(str, metaModel);
     t.close();
 }
 

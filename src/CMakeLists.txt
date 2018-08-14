@@ -16,7 +16,10 @@ set(SOURCES SampleHeader.cpp StreamHeader.cpp time.cpp)
 
 add_library(data_logger ${SOURCES} ${HEADERS})
 
-install(TARGETS data_logger 
+add_executable(data_logger-analyze data_logger-analyze.cpp)
+target_link_libraries(data_logger-analyze data_logger)
+
+install(TARGETS data_logger data_logger-analyze
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib)

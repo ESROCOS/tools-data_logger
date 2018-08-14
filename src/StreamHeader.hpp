@@ -1,5 +1,6 @@
 #pragma once
 #include "Serializable.hpp"
+#include <iostream>
 
 namespace data_logger{
 
@@ -27,3 +28,5 @@ protected:
 
 };
 }
+
+std::ostream& operator<< (std::ostream& stream, const data_logger::StreamHeader& rhs);

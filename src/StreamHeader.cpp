@@ -133,3 +133,12 @@ void data_logger::StreamHeader::deserialize(std::istream& is)
     is.read((char*) &_buffer[0], szHeader);
     deserialize(_buffer.begin());
 }
+
+std::ostream& operator<< (std::ostream& stream, const data_logger::StreamHeader& rhs)
+{
+    stream << "Data Model:        " << rhs.dataMetaModel << "\n";
+    stream << "Encoding Hint:     " << rhs.encodingHint << "\n";
+    stream << "Endianess:         " << rhs.endianness << "\n";
+    stream << "Number of samples: " << rhs.nSamples<<"\n";
+    return stream;
+}
