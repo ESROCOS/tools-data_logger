@@ -32,7 +32,14 @@ int main(int argc, char** argv){
 
     std::cout << "LOG FILE INFO\n";
     std::cout << "-------------\n";
-    std::cout << "Log file  :        " << log_file << "\n";
+    std::cout << "Log file :        " << log_file << "\n";
     std::cout << header << std::endl;
+
+    std::ofstream of;
+    of.open("encoding.txt", std::ios_base::out);
+    of << header.dataModel;
+    of.close();
+
+    std::cout << "\nData Model details are stored to encoding.txt" << std::endl;
     exit(0);
 }
