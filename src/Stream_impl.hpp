@@ -15,7 +15,7 @@ data_logger::Stream<T>::~Stream()
 
 template<class T>
 size_t data_logger::Stream<T>::pushSample(
-        std::ofstream &fstream, T sample)
+        std::ofstream &fstream, const T& sample)
 {
     currentSample.header.writeTimeStamp = Time::now();
     currentSample.setPayload(sample);

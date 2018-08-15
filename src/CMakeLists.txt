@@ -15,6 +15,7 @@ set(HEADERS common_defs.hpp
 set(SOURCES SampleHeader.cpp StreamHeader.cpp time.cpp)
 
 add_library(data_logger ${SOURCES} ${HEADERS})
+target_link_libraries(data_logger pthread)
 
 add_executable(data_logger-analyze data_logger-analyze.cpp)
 target_link_libraries(data_logger-analyze data_logger)

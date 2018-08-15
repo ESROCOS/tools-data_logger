@@ -2,9 +2,13 @@
 #include "common_defs.hpp"
 #include <fstream>
 #include "Stream.hpp"
+#include <thread>
+#include <queue>
+#include <mutex>
+
+#define QUEUE_SIZE 100
 
 namespace data_logger {
-
 template <class T>
 class LogFileWriter{
 public:
@@ -30,6 +34,11 @@ protected:
     Stream<T> _stream;
     bool _headerWritten;
     std::string _targetPath;
+    std::mutex _queue_mutex;
+    bool _running;
+    std::queue<T> _write_queue;
+    std::thread _write_thread;
+    void writeThread();
 };
 }
 

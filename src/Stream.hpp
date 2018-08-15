@@ -13,7 +13,7 @@ public:
     ~Stream();
 
     //Write given sample to ofstream
-    size_t pushSample(std::ofstream& fstream, T sample);
+    size_t pushSample(std::ofstream& fstream, const T &sample);
     //Read next sample from ifstream
     bool readNextSample(std::ifstream& fstream);
     //Jump back to first sample of ifstream
