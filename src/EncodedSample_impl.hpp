@@ -67,29 +67,14 @@ Buffer data_logger::EncodedSample<T>::serialize()
     return _buffer;
 }
 
-template<class T>
-BufferConstIt data_logger::EncodedSample<T>::deserialize(BufferConstIt it)
-{
-    //Deserialize header
-    it = header.deserialize(it);
-    //Copy payload
-    it = deserialize_container<BufferIt>(it, _payloadBuffer.begin(), header.payloadSize);
-    /*uint8_t* g = (uint8_t*) &_payloadBuffer[0];
-    std::copy(it, it+_header.payloadSize, g);
-    std::advance(it, _header.payloadSize);*/
-    return it;
-}
 
 template<class T>
-void data_logger::EncodedSample<T>::deserialize(std::istream& is)
+size_t data_logger::EncodedSample<T>::deserialize(char* ptr)
 {
     //Deserialize header
-    header.deserialize(is);
+    size_t header_size = header.deserialize(ptr);
     //Copy payload
-    is.read((char*)&_payloadBuffer[0], header.payloadSize);
-    if (!is)
-    {
-        std::cout << "error: only " << is.gcount() << " could be read";
-        runtime_error("Error decoding payload");
-    }
+    std::copy(ptr+header_size, ptr+header_size+header.payloadSize, &_payloadBuffer[0]);
+
+    return header_size+header.payloadSize;
 }

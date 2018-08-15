@@ -26,13 +26,13 @@ size_t data_logger::Stream<T>::pushSample(
 }
 
 template<class T>
-bool data_logger::Stream<T>::readNextSample(
-        std::ifstream &fstream)
+size_t data_logger::Stream<T>::readNextSample(char* ptr)
 {
     //Using _currentSample.header.serializedSize() is okay, since SampleHeader is of static size
     if(_header.nSamples > currentSampleIdx+1){
-        currentSample.deserialize(fstream);
+        size_t bytes_read = currentSample.deserialize(ptr);
         currentSampleIdx++;
+        return bytes_read;
     }else{
         return false;
     }

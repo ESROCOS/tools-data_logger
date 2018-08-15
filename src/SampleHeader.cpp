@@ -34,26 +34,15 @@ Buffer data_logger::SampleHeader::serialize()
 
 BufferConstIt data_logger::SampleHeader::deserialize(BufferConstIt it)
 {
-    /*//Copy timestamp
-    uint8_t* g = (uint8_t*) &writeTimeStamp;
-    std::copy(it, it+sizeof(writeTimeStamp), g);
-    std::advance(it, sizeof(writeTimeStamp));
-    //Copy payload size
-    g = (uint8_t*) &payloadSize;
-    std::copy(it, it+sizeof(payloadSize), g);
-    std::advance(it, sizeof(payloadSize));*/
     it = deserialize_var<int64_t>(it, writeTimeStamp.microseconds);
     it = deserialize_var<uint64_t>(it, payloadSize);
     return it;
 }
 
-void data_logger::SampleHeader::deserialize(std::istream& is)
+size_t data_logger::SampleHeader::deserialize(char* ptr)
 {
-    is.read((char*)&_buffer[0], serializedSize());
-    if (!is)
-    {
-        std::cout << "error: only " << is.gcount() << " could be read";
-        runtime_error("Error decoding sample header");
-    }
+    std::copy(ptr, ptr+serializedSize(), &_buffer[0]);
     deserialize(_buffer.begin());
+
+    return serializedSize();
 }

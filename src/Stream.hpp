@@ -15,7 +15,7 @@ public:
     //Write given sample to ofstream
     size_t pushSample(std::ofstream& fstream, const T &sample);
     //Read next sample from ifstream
-    bool readNextSample(std::ifstream& fstream);
+    size_t readNextSample(char* ptr);
     //Jump back to first sample of ifstream
     void rewind(std::ifstream& fstream);
 

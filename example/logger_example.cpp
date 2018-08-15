@@ -148,6 +148,6 @@ int main(int argc, char** argv)
          std::cout << "Timestamp: "<<s.header.writeTimeStamp.toString()<<std::endl;
          std::cout << "Read: "<<sample_r.input_data<<", "<<sample_r.output_data<<","<<sample_r.validity<<std::endl;
      }
-     reader.close();
+     reader.closeLogfile();
      std::cout << "Closed"<<std::endl;
 }

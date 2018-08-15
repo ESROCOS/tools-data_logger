@@ -9,6 +9,7 @@ void usage(){
 }
 
 int main(int argc, char** argv){
+
     if(argc < 2){
         std::cerr << "\nERROR: No log file was provided." << std::endl;
         usage();
@@ -27,14 +28,29 @@ int main(int argc, char** argv){
     }
 
     StreamHeader header;
-    _fstream.seekg(0, _fstream.beg);
-    header.deserialize(_fstream);
+
+    //Read header size (include sizes fon dynmically typed string fields
+    size_t szHeader;
+    char* hp = (char*) &szHeader;
+    _fstream.seekg (0, _fstream.beg); //Start from beginning of file
+    _fstream.read(hp, sizeof(size_t));
+
+    //Now load entire header
+    std::vector<char> buffer;
+    buffer.resize(szHeader);
+    _fstream.seekg (0, _fstream.beg); //Again start from beginning of file
+    _fstream.read(&buffer[0], szHeader);
+
+    _fstream.close();
+
+    size_t bytes_read = header.deserialize(&buffer[0]);
+
+
 
     std::cout << "LOG FILE INFO\n";
     std::cout << "-------------\n";
-    std::cout << "Log file :        " << log_file << "\n";
+    std::cout << "Log file :         " << log_file << "\n";
     std::cout << header << std::endl;
-
     std::ofstream of;
     of.open("encoding.txt", std::ios_base::out);
     of << header.dataModel;
@@ -42,4 +58,5 @@ int main(int argc, char** argv){
 
     std::cout << "\nData Model details are stored to encoding.txt" << std::endl;
     exit(0);
+
 }

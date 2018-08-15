@@ -121,17 +121,17 @@ BufferConstIt data_logger::StreamHeader::deserialize(BufferConstIt it)
     return it;
 }
 
-void data_logger::StreamHeader::deserialize(std::istream& is)
+size_t data_logger::StreamHeader::deserialize(char* ptr)
 {
-    int begin = is.tellg();
     size_t szHeader;
     char* hp = (char*) &szHeader;
-    is.read(hp, sizeof(size_t));
+    std::copy(ptr, ptr+sizeof(size_t), hp);
 
     _buffer.resize(szHeader);
-    is.seekg(begin, is.beg);
-    is.read((char*) &_buffer[0], szHeader);
+    std::copy(ptr, ptr+szHeader, &_buffer[0]);
     deserialize(_buffer.begin());
+
+    return szHeader;
 }
 
 std::ostream& operator<< (std::ostream& stream, const data_logger::StreamHeader& rhs)
